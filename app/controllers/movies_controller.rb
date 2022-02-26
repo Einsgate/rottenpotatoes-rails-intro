@@ -7,7 +7,17 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @classes = {}
     @movies = Movie.all
+    
+    if params[:order] == 'title'
+      @movies = @movies.order(:title)
+      @classes[:title_header] = "hilite bg-warning"
+    elsif params[:order] == 'release_date'
+      @movies = @movies.order(:release_date)
+      @classes[:release_date_header] = "hilite bg-warning"
+    end
+    
   end
 
   def new
