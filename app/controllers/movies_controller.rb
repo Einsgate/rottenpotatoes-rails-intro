@@ -7,9 +7,31 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @my_debug = false
+    
     @classes = {}
     @checked = {}
     @all_ratings = Movie.select(:rating).distinct
+    
+    # Load params from the session
+    if (not params[:ratings]) and (not params[:order]) 
+      if session[:params]
+        if session[:params]["ratings"] or session[:params]["order"]
+          flash.keep
+          redirect_to controller: "movies", action: "index", ratings: session[:params]["ratings"], order: session[:params]["order"]
+        end
+      end
+    elsif not params[:ratings]
+      if session[:params] and session[:params]["ratings"]
+        flash.keep
+        redirect_to controller: "movies", action: "index", ratings: session[:params]["ratings"], order: params[:order]
+      end
+    elsif not params[:order]
+      if session[:params] and session[:params]["order"]
+        flash.keep
+        redirect_to controller: "movies", action: "index", ratings: params[:ratings], order: session[:params]["order"]
+      end
+    end
     
     # Filter first
     if params[:ratings]
@@ -31,6 +53,9 @@ class MoviesController < ApplicationController
       @movies = @movies.order(:release_date)
       @classes[:release_date_header] = "hilite bg-warning"
     end
+    
+    # Store params in session
+    session[:params] = params.clone
     
   end
 
