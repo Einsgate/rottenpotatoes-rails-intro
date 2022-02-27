@@ -8,7 +8,21 @@ class MoviesController < ApplicationController
 
   def index
     @classes = {}
-    @movies = Movie.all
+    @checked = {}
+    @all_ratings = Movie.select(:rating).distinct
+    
+    # Filter first
+    if params[:ratings]
+      @movies = Movie.with_ratings(params[:ratings].keys)
+      for key in params[:ratings].keys
+        @checked[key] = true
+      end
+    else
+      @movies = Movie.all
+      for rating in @all_ratings
+         @checked[rating.rating] = true
+      end
+    end
     
     if params[:order] == 'title'
       @movies = @movies.order(:title)

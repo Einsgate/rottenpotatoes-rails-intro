@@ -1,6 +1,16 @@
 <!--  This file is app/views/movies/index.html.erb -->
 <h2>All Movies</h2>
 
+
+<%= form_tag movies_path, :method => :get, id: "ratings_form" do %>
+  Include:
+  <% @all_ratings.each do |rating| %>
+    <%= rating.rating %>
+    <%= check_box_tag "ratings[#{rating.rating}]", "1", @checked[rating.rating], id: "ratings_#{rating.rating}" %>
+  <% end %>
+  <%= submit_tag 'Refresh', :class => 'btn btn-primary', id: "ratings_submit" %>
+<% end %>
+
 <%#  Part 1: Start here... %>
 <table class="table table-striped col-md-12" id="movies">
   <thead>
